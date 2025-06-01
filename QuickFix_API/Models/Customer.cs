@@ -25,5 +25,6 @@ namespace QuickFix_API.Models
         [Required]
         [Column(TypeName = "varchar(50)")]
         public string CityLivingIn { get; set; } = "";
+
     }
 }
