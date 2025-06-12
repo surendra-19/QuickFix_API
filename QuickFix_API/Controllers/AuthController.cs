@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuickFix_API.AuthService;
 using QuickFix_API.Data;
 using QuickFix_API.Models;
 
@@ -11,9 +12,14 @@ namespace QuickFix_API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly QuickFixDBContext _context;
-        public AuthController(QuickFixDBContext context)
+        private readonly IConfiguration _config;
+        private readonly AuthServiceClass _authService;
+
+        public AuthController(QuickFixDBContext context ,IConfiguration configuration,AuthServiceClass authServiceClass)
         {
             _context = context;
+            _config =  configuration;
+            _authService = authServiceClass;
         }
         [HttpPost("Signup")]
         public async Task<IActionResult> CustomerRegistration(Customer customer)
@@ -36,14 +42,13 @@ namespace QuickFix_API.Controllers
         {
             var email = login.Email;
             var password = login.Password;
-            var existingCustomer = await _context.Customers.Where(
-                    customer => customer.Email == email && customer.Password == password
-                ).ToListAsync();
-            if (existingCustomer.Count == 0)
+            var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == login.Email && c.Password == login.Password);
+            if (existingCustomer == null)
             {
                 return NotFound("Invalid email or password");
             }
-            return Ok(existingCustomer);
+            var token = _authService.GenerateJwtToken(existingCustomer);
+            return Ok(new { token });
         }
     }
 }
