@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using QuickFix_API.Context;
 using QuickFix_API.DTOS;
 using QuickFix_API.Models;
+using QuickFix_API.Services;
 
 namespace QuickFix_API.Controllers
 {
@@ -10,27 +11,18 @@ namespace QuickFix_API.Controllers
     [ApiController]
     public class AuthorizationController : ControllerBase
     {
-        private readonly QuickFixDbContext _dbcontext;
-        public AuthorizationController(QuickFixDbContext context)
+        private readonly IAuthorizationService _authorizationService;
+
+        public AuthorizationController(IAuthorizationService authorizationService)
         {
-            _dbcontext = context;
+            _authorizationService = authorizationService;
         }
 
         [HttpPost("CustomerRegistration")]
-        public async Task<IActionResult> CustomerRegistration([FromBody] SignupDTO signup )
+        public async Task<IActionResult> CustomerRegistration([FromBody] SignupDTO signup)
         {
-            var newCustomer = new Customer{ 
-                FirstName = signup.FirstName,
-                LastName = signup.LastName,
-                Email = signup.Email,
-                Password = signup.Password,
-                ContactNumber = signup.ContactNumber,
-                Address = signup.Address,
-                CityLivingIn = signup.CityLivingIn
-            };
-            _dbcontext.Add(newCustomer);
-            await _dbcontext.SaveChangesAsync();
-            return Ok(new {message="User Registration Successful!"});
+            await _authorizationService.RegisterCustomerAsync(signup);
+            return Ok(new { message = "User Registration Successful!" });
         }
     }
 }
