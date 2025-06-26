@@ -1,6 +1,6 @@
 ﻿using QuickFix_API.DTOS;
 
-namespace QuickFix_API.Services
+namespace QuickFix_API.Interfaces
 {
     public interface IAuthorizationService
     {

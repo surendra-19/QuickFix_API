@@ -1,13 +1,14 @@
 ﻿using QuickFix_API.Context;
 using QuickFix_API.DTOS;
+using QuickFix_API.Interfaces;
 using QuickFix_API.Models;
 
 namespace QuickFix_API.Repositories
 {
-    public class CustomerRepository : ICustomerRepository
+    public class AuthorizationAccess : ICustomerRepository
     {
         private readonly QuickFixDbContext _dbContext;
-        public CustomerRepository(QuickFixDbContext dbContext)
+        public AuthorizationAccess(QuickFixDbContext dbContext)
         {
             _dbContext = dbContext;
         }
